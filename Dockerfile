@@ -18,7 +18,7 @@ RUN apk --no-cache add \
     && rm /etc/nginx/conf.d/default.conf
 
 # Copy system configs
-COPY config/etc /etc
+COPY docker/etc /etc
 
 # Make sure files/folders needed by the processes are accessable when they run under the sw6
 RUN chown -R sw6.sw6 /run && \

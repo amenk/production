@@ -1,4 +1,4 @@
-#override defaults for dev
+# This is an example for local development!
 version: "3.7"
 
 services:
