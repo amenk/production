@@ -10,23 +10,14 @@ It's intended as a basis for project customizations, which are usually done by a
 If you want to contribute to the [Shopware Platform](https://github.com/shopware/platform) or develop store plugins, 
 you should use the [development template](https://github.com/shopware/development).
 
-## Branches and stability
+## What's the difference to the official production template?
 
-In each commit a composer.lock is contained to ensure that the version being
-deployed is the version that was tested in our CI. We currently provide the following
-branches:
-- `6.3`: stable minor and patch releases (`v6.3.0.0-rc2`, `v6.3.0.1`, `v6.3.1.0`, `v6.1.*`, but not `v6.4.0.0`)
-- `master`: stable major, minor and patch releases (`v6.3.0.0`, `v6.3.1.0`, `v6.4.0.0`, `v6.5.0.0`...)
-
-The `6.3` branch contains all the 6.3 releases. It's stable now and only gets non-breaking changes. (security issues are an exception).
-
-The `master` branch contains the newest stable release, including major releases. That may result in plugins being incompatible, so be careful.
-
-Starting with `6.3.0.0`, we use a slightly modified version of SemVer. The pattern looks like this: 6.MAJOR.MINOR.PATCH. Examples:
-* 6.3.2.5 - Major=3, Minor=2, Patch=5
-* 6.4.1.0 - Major=4, Minor=1, Patch=0
-
-See also: https://www.shopware.com/en/news/shopware-6-versioning-strategy/
+* Easier configurable Docker setup
+    * Opcache enabled
+* Can be used with no dev dependencies
+* Fixed blue green selection
+* Don't force blue green
+* Allows changing locale / currency on installation
 
 ## Requirements
 
@@ -41,8 +32,8 @@ If you are using a separate build server, consider having NPM and Node as build-
 To set up the environment and install with a basic setup run the following commands:
 
 ```bash
-# clone newest 6.1 patch version from github 
-git clone --branch=6.1 https://github.com/shopware/production shopware
+# clone newest 6.3
+git clone --branch=6.3 https://github.com/FriendsOfShopware/production shopware
 cd shopware
 
 # install shopware and dependencies according to the composer.lock 
