@@ -56,13 +56,15 @@ class SystemInstallCommand extends Command
     {
         $output = new ShopwareStyle($input, $output);
 
-        /**
-         * Needs to be set because migration for testsuite needs the trigger.
-         * Because there are some tests that work directly on the db and so ignore the indexer
-         */
-        putenv('BLUE_GREEN_DEPLOYMENT=1');
+        if (!isset($_ENV['BLUE_GREEN_DEPLOYMENT'])) {
+            /**
+             * Needs to be set because migration for testsuite needs the trigger.
+             * Because there are some tests that work directly on the db and so ignore the indexer
+             */
+            putenv('BLUE_GREEN_DEPLOYMENT=1');
 
-        $_ENV['BLUE_GREEN_DEPLOYMENT'] = 1;
+            $_ENV['BLUE_GREEN_DEPLOYMENT'] = 1;
+        }
 
         $dsn = trim((string)($_ENV['DATABASE_URL'] ?? $_SERVER['DATABASE_URL'] ?? getenv('DATABASE_URL')));
         if ($dsn === '' || $dsn === Kernel::PLACEHOLDER_DATABASE_URL)  {
@@ -146,10 +148,6 @@ class SystemInstallCommand extends Command
             $commands[] = [
                 'command' => 'system:locale-destructive',
                 'locale' => $input->getOption('locale'),
-            ];
-
-            $commands[] = [
-                'command' => 'cache:clear',
             ];
         }
 
