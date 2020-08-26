@@ -48,7 +48,7 @@ class SystemLocaleCommand extends Command
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $output = new ShopwareStyle($input, $output);
-        $output->section('Shop locale');
+        $output->section('Default locale');
 
         if (!$this->activated) {
             $output->error('The command has not been activated by the runtime and therefore cannot be executed. It is intended to be used with system:install --locale');
