@@ -49,3 +49,4 @@ custom/*
 !/var/queue/.gitkeep
 !/var/test/.gitkeep
 !/var/plugins.json
+/.uniqueid.txt

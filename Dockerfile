@@ -1,47 +1,50 @@
-FROM alpine:3.10
+FROM php:7.4-fpm-alpine
 
-ENV COMPOSER_HOME=/var/cache/composer
-ENV PROJECT_ROOT=/sw6
-ENV ARTIFACTS_DIR=/artifacts
-ENV LD_PRELOAD=/usr/lib/preloadable_libiconv.so
+ENV FPM_PM_MAX_CHILDREN=5 \
+    FPM_PM_START_SERVERS=2 \
+    FPM_PM_MIN_SPARE_SERVERS=1 \
+    FPM_PM_MAX_SPARE_SERVERS=3 \
+    PHP_MAX_UPLOAD_SIZE=128m \
+    PHP_MAX_EXECUTION_TIME=300 \
+    PHP_MEMORY_LIMIT=512m
 
-RUN apk --no-cache add \
-        nginx supervisor curl zip rsync xz coreutils \
-        php7 php7-fpm \
-        php7-ctype php7-curl php7-dom php7-fileinfo php7-gd \
-        php7-iconv php7-intl php7-json php7-mbstring \
-        php7-mysqli php7-openssl php7-pdo_mysql \
-        php7-session php7-simplexml php7-tokenizer php7-xml php7-xmlreader php7-xmlwriter \
-        php7-zip php7-zlib php7-phar php7-opcache git \
-        gnu-libiconv \
-    && adduser -u 1000 -D -h $PROJECT_ROOT sw6 sw6 \
-    && rm /etc/nginx/conf.d/default.conf
+COPY --from=ochinchina/supervisord:latest /usr/local/bin/supervisord /usr/bin/supervisord
+COPY --from=composer:2 /usr/bin/composer /usr/local/bin/composer
+COPY --from=mlocati/php-extension-installer /usr/bin/install-php-extensions /usr/bin/
+EXPOSE 80
 
-# Copy system configs
-COPY docker/etc /etc
+RUN set -x && \
+      apk add --no-cache \
+      nginx \
+      shadow \
+      unzip \
+      wget \
+      sudo \
+      bash && \
+    install-php-extensions bcmath gd intl mysqli pdo_mysql sockets bz2 gmp soap zip gmp ffi redis opcache && \
+    ln -s /usr/local/bin/php /usr/bin/php && \
+    ln -sf /dev/stdout /var/log/nginx/access.log && \
+    ln -sf /dev/stderr /var/log/nginx/error.log && \
+    rm -rf /var/lib/nginx/tmp && \
+    ln -sf /tmp /var/lib/nginx/tmp && \
+    mkdir -p /var/tmp/nginx/ || true && \
+    chown -R www-data:www-data /var/lib/nginx /var/tmp/nginx/ && \
+    chmod 777 -R /var/tmp/nginx/ && \
+    rm -rf /tmp/* && \
+    chown -R www-data:www-data /var/www && \
+    usermod -u 1000 www-data && \
+    cd /var/www/html && \
+    chown -R 1000 /var/www/html
 
-# Make sure files/folders needed by the processes are accessible when they run under the sw6
-RUN chown -R sw6.sw6 /run && \
-  chown -R sw6.sw6 /var/lib/nginx && \
-  chown -R sw6.sw6 /var/tmp/nginx && \
-  chown -R sw6.sw6 /var/log/nginx
+COPY docker /
 
-WORKDIR $PROJECT_ROOT
+WORKDIR /var/www/html
+COPY --chown=www-data . /var/www/html
 
-USER sw6
+RUN sudo -u www-data composer install
+RUN APP_URL="http://localhost" sudo -u www-data -E bin/console assets:install && \
+        rm -rf var/cache/*
 
-ADD --chown=sw6 . .
+ENTRYPOINT ["/entrypoint.sh"]
 
-RUN APP_URL="http://localhost" DATABASE_URL="" bin/console assets:install \
-    && rm -Rf var/cache \
-    && touch install.lock \
-    && mkdir -p var/cache
-
-# Expose the port nginx is reachable on
-EXPOSE 8000
-
-# Let supervisord start nginx & php-fpm
-ENTRYPOINT ["./bin/entrypoint.sh"]
-
-# Configure a healthcheck to validate that everything is up&running
-HEALTHCHECK --timeout=10s CMD curl --silent --fail http://127.0.0.1:8000/fpm-ping
+HEALTHCHECK --timeout=10s CMD curl --silent --fail http://127.0.0.1/fpm-ping

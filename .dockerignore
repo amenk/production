@@ -24,3 +24,5 @@ docker-compose.override.yml
 /public/theme
 /public/thumbnail
 /artifacts
+Dockerfile
+install.lock

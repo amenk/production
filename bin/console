@@ -60,16 +60,8 @@ if (trim($_SERVER['DATABASE_URL'] ?? '') === '') {
     $pluginLoader = new DbalKernelPluginLoader($classLoader, null, \Shopware\Core\Kernel::getConnection());
 }
 
-if (class_exists('Shopware\Core\HttpKernel')) {
-    $kernel = new \Shopware\Production\HttpKernel($env, $debug, $classLoader);
-    $kernel->setPluginLoader($pluginLoader);
+$kernel = new \Shopware\Production\HttpKernel($env, $debug, $classLoader);
+$kernel->setPluginLoader($pluginLoader);
 
-    $application = new Application($kernel->getKernel());
-    $application->run($input);
-
-    return;
-}
-
-$kernel = new Kernel($env, $debug, $pluginLoader, $_SERVER['SW_CACHE_ID'] ?? null, $shopwareVersion);
-$application = new Application($kernel);
+$application = new Application($kernel->getKernel());
 $application->run($input);
