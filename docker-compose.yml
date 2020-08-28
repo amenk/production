@@ -3,10 +3,10 @@ version: "3.7"
 
 services:
   app_server:
-    image: shopware-production:local
-    build: .
-    depends_on:
-      - mysql
+    image: shyim/shopware-platform-nginx:php74
+#    build: .
+#    depends_on:
+#      - mysql
     ports:
       - 80:80
 #    environment:
@@ -21,14 +21,14 @@ services:
 #      - "./public/thumbnail:/sw6/public/thumbnail"
 #      - "./var:/sw6/var"
 
-  mysql:
-    image: mysql:8.0.19
-    environment:
-      MYSQL_ROOT_PASSWORD: root
-      MYSQL_DATABASE: shopware
-      MYSQL_USER: shopware
-      MYSQL_PASSWORD: shopware
-    command: ["mysqld", "--default-authentication-plugin=mysql_native_password"]
+#  mysql:
+#    image: mysql:8.0.19
+#    environment:
+#      MYSQL_ROOT_PASSWORD: root
+#      MYSQL_DATABASE: shopware
+#      MYSQL_USER: shopware
+#      MYSQL_PASSWORD: shopware
+#    command: ["mysqld", "--default-authentication-plugin=mysql_native_password"]
 
 #  elasticsearch:
 #    image: elastic/elasticsearch:7.9.0
