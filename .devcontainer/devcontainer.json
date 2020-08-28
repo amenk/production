@@ -1,0 +1,9 @@
+{
+	"name": "Shopware in Codespaces",
+	"dockerComposeFile": [
+		"docker-compose.yml"
+	],
+	"service": "app_server",
+	"workspaceFolder": "/var/www/html",
+	"remoteUser": "www-data"
+}
