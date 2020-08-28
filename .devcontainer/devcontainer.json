@@ -1,7 +1,7 @@
 {
 	"name": "Shopware in Codespaces",
 	"dockerComposeFile": [
-		"docker-compose.yml"
+		"../docker-compose.yml"
 	],
 	"service": "app_server"
 }
