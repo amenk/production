@@ -9,7 +9,7 @@ services:
       - mysql
     ports:
       - 80:80
-    environment:
+#    environment:
       # define yourself the environments or use .env file
     volumes:
        - "./:/var/www/html"
