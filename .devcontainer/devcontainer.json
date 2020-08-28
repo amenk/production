@@ -3,5 +3,6 @@
 	"dockerComposeFile": [
 		"../docker-compose.yml"
 	],
-	"service": "app_server"
+	"service": "app_server",
+	"workspaceFolder": "/var/www/html"
 }
