@@ -3,7 +3,7 @@ version: "3.7"
 
 services:
   app_server:
-    image: shyim/shopware-codespace:php74
+    image: shyim/shopware:php74
     depends_on:
       - mysql
     ports:
